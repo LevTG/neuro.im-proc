@@ -404,41 +404,48 @@ class AstroGraph(nx.Graph):
 
 
     def related_tips(self, root):
-
+        
         # # collect tree nodes
-        # coords = [i[0] for i in self.graph.nodes.data()]
-        # all_roots = [i[1]["root"] for i in self.graph.nodes.data()]
+            # coords = [i[0] for i in self.graph.nodes.data()]
+            # all_roots = [i[1]["root"] for i in self.graph.nodes.data()]
 
-        # #create root-specialized mask
-        # x, y, z = root
-        # root_mask = (np.array(all_roots)[:,0]==x) & (np.array(all_roots)[:,1]==y) & (np.array(all_roots)[:,2]==z)
-        # root_nodes = [tuple(i) for i in np.array(coords)[root_mask]]
+            # #create root-specialized mask
+            # x, y, z = root
+            # root_mask = (np.array(all_roots)[:,0]==x) & (np.array(all_roots)[:,1]==y) & (np.array(all_roots)[:,2]==z)
+            # root_nodes = [tuple(i) for i in np.array(coords)[root_mask]]
 
-        # #get all tips
-        # my_tips = np.array(list(self.tips))
+            # #get all tips
+            # my_tips = np.array(list(self.tips))
 
-        # #filter tips
-        # root_tips = []
+            # #filter tips
+            # root_tips = []
 
-        # for tip in my_tips:
-        #     tip = tuple(tip)
+            # for tip in my_tips:
+            #     tip = tuple(tip)
 
-        #     if tip in root_nodes:
-        #         root_tips.append(tip)
+            #     if tip in root_nodes:
+            #         root_tips.append(tip)
 
-        # return root_tips
+            # return root_tips
+        
+        try:
+            # root_nodes = self.get_sector(root)
+            tips = self.tips
+            root_tips = [tip for tip in tips if tip['root'] == root]
+            return root_tips
 
-        # root_nodes = self.get_sector(root)
-        tips = self.tips
-        root_tips = [tip for tip in tips if tip['root'] == root]
-        return root_tips
+        except:
+            nodes = list(self.nodes.data())
+            root_nodes = [i for i,j in nodes if j['root'] == root]
+            root_tips = [tip for tip in self.tips if tip in root_nodes]
+            return root_tips
 
 
     def root_travel(self, root):
         root_path = {}
         root_path[root] = (1, -1)
         count = 2
-
+        
         tips = self.related_tips(root)
 
         for tip in tips:
